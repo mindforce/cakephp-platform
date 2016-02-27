@@ -1,0 +1,25 @@
+{
+    "name": "mindforce/cakephp-platform",
+    "description": "Platform plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "require": {
+        "php": ">=5.4.16",
+        "cakephp/cakephp": ">=3.1",
+        "cakephp/migrations": "~1.0",
+        "cakephp/plugin-installer": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Platform\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Platform\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}
