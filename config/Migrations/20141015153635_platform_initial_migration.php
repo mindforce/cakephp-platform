@@ -11,9 +11,8 @@
 */
 
 use Phinx\Migration\AbstractMigration;
-use Cake\ORM\TableRegistry;
 
-class InitialMigration extends AbstractMigration
+class PlatformInitialMigration extends AbstractMigration
 {
 
     /**
