@@ -63,30 +63,86 @@ class SetupShell extends Shell
         }
     }
 
+    public function install(){
+        $this->update();
+        $this->out(__d('platform', '<warning>Database data seeding</warning>'));
+        $this->hr();
+        foreach(Plugin::loaded() as $plugin){
+            $seedsDir = new Folder(Plugin::path($plugin).'config'.DS.'Seeds', false);
+            $seedFiles = $seedsDir->find('.*\.php');
+            if(count($seedFiles) > 0){
+                $this->runMigrations('seed', $plugin);
+                $this->out(__d('platform', '- <success>{0} plugin dataseed processed</success>', $plugin));
+            }
+        }
+        $seedsDir = new Folder(ROOT.DS.'config'.DS.'Seeds', false);
+        $seedFiles = $seedsDir->find('.*\.php');
+        if(count($seedFiles) > 0){
+            $this->runMigrations();
+            $this->out(__d('platform', '- <success>App core database data seed processed</success>'));
+        }
+        $this->out($this->nl());
+    }
+
     public function update(){
-        $this->out(__d('platform', '-- Start database populating for app structure'));
+        $this->out(__d('platform', '<warning>Database populating for app structure</warning>'));
         $this->hr();
         foreach(Plugin::loaded() as $plugin){
             $migrationsDir = new Folder(Plugin::path($plugin).'config'.DS.'Migrations', false);
             $migrationFiles = $migrationsDir->find('.*\.php');
             if(count($migrationFiles) > 0){
-                $this->runMigrations($plugin);
-                $this->out(__d('platform', '- {0} plugin migrations processed', $plugin));
+                $this->runMigrations('migrate', $plugin);
+                $this->out(__d('platform', '- <success>{0} plugin migrations processed</success>', $plugin));
             }
         }
         $migrationsDir = new Folder(ROOT.DS.'config'.DS.'Migrations', false);
         $migrationFiles = $migrationsDir->find('.*\.php');
         if(count($migrationFiles) > 0){
             $this->runMigrations();
-            $this->out(__d('platform', '- App core database migrations processed'));
+            $this->out(__d('platform', '- <success>App core database migrations processed</success>'));
         }
+        $this->out($this->nl());
+        $this->out(__d('platform', '<warning>Settings updates</warning>'));
         $this->hr();
+        foreach(Plugin::loaded() as $plugin){
+            $settingsTask = $this->Tasks->load('Platform.Settings');
+            $settingsTask->plugin = $plugin;
+            $settingsTask->import();
+        }
+        $this->out($this->nl());
+        $this->dispatchShell('orm_cache', 'clear');
     }
 
-    protected function runMigrations($plugin = null){
-        $args = ['migrations', 'migrate', '-q'];
+    public function reset(){
+        $this->out(__d('platform', '<warning>Start app database downgrading</warning>'));
+        $this->hr();
+        $migrationsDir = new Folder(ROOT.DS.'config'.DS.'Migrations', false);
+        $migrationFiles = $migrationsDir->find('.*\.php');
+        if(count($migrationFiles) > 0){
+            $this->runMigrations();
+            $this->out(__d('platform', '- <success>App core database downgraded</success>'));
+        }
+        foreach(Plugin::loaded() as $plugin){
+            $migrationsDir = new Folder(Plugin::path($plugin).'config'.DS.'Migrations', false);
+            $migrationFiles = $migrationsDir->find('.*\.php');
+            if(count($migrationFiles) > 0){
+                $this->runMigrations('rollback', $plugin);
+                $this->out(__d('platform', '- <success>{0} plugin migrations downgraded</success>', $plugin));
+            }
+        }
+        $this->hr();
+        if(file_exists(ROOT.DS.'config'.DS.'config.php')){
+            unlink(ROOT.DS.'config'.DS.'config.php');
+        }
+    }
+
+    protected function runMigrations($action = 'migrate', $plugin = null){
+        $args = ['migrations', $action, '-q'];
+        if($action == 'rollback'){
+            $args = array_merge($args, ['-t', 0]);
+        }
         if($plugin){
-            $args = array_merge($args, ['-p', $plugin]);
+            $args = array_merge($args, ['--plugin', $plugin]);
         }
         //debug($args);
         $app = new MigrationsDispatcher(PHINX_VERSION);

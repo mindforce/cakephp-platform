@@ -20,7 +20,7 @@ class PlatformInitialMigration extends AbstractMigration
      */
     public function up()
     {
-	    $blocks =  $this->table('platform_blocks');
+	    $blocks = $this->table('platform_blocks');
 	    $blocks->addColumn('title', 'string', ['limit' => 255])
             ->addColumn('slug', 'string', ['limit' => 255])
             ->addColumn('admin', 'boolean', ['null' => true])
@@ -31,7 +31,7 @@ class PlatformInitialMigration extends AbstractMigration
 		    ->addIndex(['slug', 'admin'], array('unique' => true, 'name' => 'platform_blocks_slug_admin_idx'))
             ->save();
 
-	    $cells =  $this->table('platform_cells');
+	    $cells = $this->table('platform_cells');
 	    $cells->addColumn('block_id', 'integer', ['default' => 0])
 			->addColumn('parent_id', 'integer', ['null' => true])
 		    ->addColumn('title', 'string', ['limit' => 255])
@@ -46,9 +46,9 @@ class PlatformInitialMigration extends AbstractMigration
 		    ->addColumn('options', 'text', ['null' => true])
 		    ->addColumn('visibility', 'string', ['limit' => 11, 'default' => 'all'])
 		    ->addColumn('visible_on', 'text', ['null' => true])
-		    ->addIndex(['slug'], array('unique' => true, 'name' => 'cells_slug_idx'))
+		    ->addIndex(['slug'], array('unique' => true, 'name' => 'platform_cells_slug_idx'))
 		    //->addForeignKey('block_id', 'blocks', 'id', ['delete'=> 'SET_NULL', 'update'=> 'NO_ACTION'])
-		    ->addIndex(['block_id', 'state'], array('unique' => false, 'name' => 'rear_engine_cells_block_id_state_admin_idx'))
+		    ->addIndex(['block_id', 'state'], array('unique' => false, 'name' => 'platform_cells_block_id_state_admin_idx'))
 		    ->addIndex(['parent_id'], array('unique' => false, 'name' => 'platform_cells_parent_id_idx'))
 		    ->addIndex(['visibility'], array('unique' => false, 'name' => 'platform_cells_visibility_idx'))
 			->save();
@@ -80,6 +80,10 @@ class PlatformInitialMigration extends AbstractMigration
 	    $this->dropTable('platform_blocks');
 	    $this->dropTable('platform_cells');
 	    $this->dropTable('platform_settings');
+        $sessionsExists = $this->hasTable('sessions');
+        if ($sessionsExists) {
+            $this->dropTable('sessions');
+        }
 
     }
 }

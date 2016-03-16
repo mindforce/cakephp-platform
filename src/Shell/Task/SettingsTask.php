@@ -12,8 +12,10 @@
 namespace Platform\Shell\Task;
 
 use Bake\Shell\Task\BakeTask;
-use Cake\Datasource\ConnectionManager;
 use Cake\Core\Configure\Engine\PhpConfig;
+use Cake\Core\Plugin;
+use Cake\Datasource\ConnectionManager;
+use Cake\Filesystem\Folder;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\Utility\Hash;
@@ -35,12 +37,28 @@ class SettingsTask extends BakeTask{
 	}
 
     public function import(){
-	    $config = new PhpConfig();
 	    $settingsFile = 'settings';
-	    if(!empty($this->plugin))
-		    $settingsFile = $this->plugin.'.'.$settingsFile;
-        $data = $config->read($settingsFile);
+		if(!empty($this->plugin)){
+			$settingsFile = $this->plugin.'.'.$settingsFile;
+			$settingsFileDir = Plugin::path($this->plugin).'config';
+		} else {
+			$settingsFileDir = ROOT.DS.'config';
+		}
+		$settingsDir = new Folder($settingsFileDir, false);
+		if(!$settingsDir->find('settings.*')){
+			return false;
+		}
 
+		$config = new PhpConfig();
+        $data = $config->read($settingsFile);
+		if(!$data){
+			return false;
+		}
+		if(!empty($this->plugin)){
+			$this->out(__d('platform', '- <success>Processing settings pool for {0} plugin</success>', $this->plugin));
+		} else {
+			$this->out(__d('platform', '- <success>Processing settings pool for {0}</success>', 'App'));
+		}
 	    $settingsTable = TableRegistry::get('Platform.Settings');
 	    foreach ($data as $row){
 		    if ((!isset($row['plugin'])||empty($row['plugin']))&&!empty($this->plugin)) {
