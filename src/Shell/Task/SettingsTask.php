@@ -19,7 +19,7 @@ use Cake\Filesystem\Folder;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\Utility\Hash;
-
+use Platform\Core\Settings;
 /**
  * Language string extractor
  *
@@ -82,6 +82,12 @@ class SettingsTask extends BakeTask{
 			$setting = $settingsTable->patchEntity($setting, $data);
 		    $settingsTable->save($setting);
 	    }
+		$settings = $settingsTable->find()
+			->combine('path', 'value')
+			->toArray();
+		ksort($settings);
+		$settings = Hash::expand($settings);
+		Settings::dump('config', 'default', $settings);
     }
 
     public function get(){
