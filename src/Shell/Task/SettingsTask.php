@@ -61,7 +61,7 @@ class SettingsTask extends BakeTask{
 		}
 	    $settingsTable = TableRegistry::get('Platform.Settings');
 	    foreach ($data as $row){
-		    if ((!isset($row['plugin'])||empty($row['plugin']))&&!empty($this->plugin)) {
+		    if (!isset($row['plugin'])||empty($row['plugin'])) {
 			    $row['plugin'] = $this->plugin;
 		    }
 			$data = [
@@ -82,6 +82,7 @@ class SettingsTask extends BakeTask{
 			$setting = $settingsTable->patchEntity($setting, $data);
 		    $settingsTable->save($setting);
 	    }
+		//TODO: Maybe chared method for settings save
 		$settings = $settingsTable->find()
 			->combine('path', 'value')
 			->toArray();

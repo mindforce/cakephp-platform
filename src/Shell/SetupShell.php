@@ -109,6 +109,10 @@ class SetupShell extends Shell
             $settingsTask->plugin = $plugin;
             $settingsTask->import();
         }
+        $settingsTask = $this->Tasks->load('Platform.Settings');
+        $settingsTask->plugin = false;
+        $settingsTask->import();
+
         $this->out($this->nl());
         $this->dispatchShell('orm_cache', 'clear');
     }
