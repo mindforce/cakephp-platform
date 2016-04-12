@@ -139,4 +139,17 @@ $config = [
             ]
         ],
     ],
+    [
+        'path' => 'Email.queue',
+        'title' => 'Defer email sending',
+        'description' => 'If this option enabled all emails should be sent via cronjob instead direct sending (Cronjob required)',
+        'default' => '0',
+        'options' => [
+            "type" => "radio",
+            "options" => [
+                "0" => "No",
+                "1" => "Yes"
+            ]
+        ],
+    ],
 ];

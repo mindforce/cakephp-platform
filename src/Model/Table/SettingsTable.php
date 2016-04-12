@@ -90,8 +90,9 @@ class SettingsTable extends Table {
 		//TODO: maybe implement cache for reader results or remember results in table class in future
 		$settingsReader = new PhpConfig();
 		$input = 'settings';
-		if(!empty($plugin))
+		if(!empty($plugin)){
 			$input = $plugin.'.settings';
+		}
 		$settingPrototypes = $settingsReader->read($input);
 		if($setting = Hash::extract($settingPrototypes, '{n}[path='.$path.']')[0]){
 			return array_merge($defaults, $setting);
