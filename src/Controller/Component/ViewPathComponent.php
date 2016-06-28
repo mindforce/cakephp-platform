@@ -23,10 +23,8 @@ class ViewPathComponent extends Component {
                 //TODO: improve template extension detection to pass other template engine checks
 				if (file_exists($templatePath . '.ctp')) {
 					$controller->viewBuilder()->template($view);
-                    debug($controller->viewBuilder());
-                    exit();
                     $controller->render($view);
-					//return;
+					return;
 				}
 			}
 		}
