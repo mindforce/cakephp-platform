@@ -50,9 +50,4 @@ class EmailComponent extends Component
         return $result;
     }
 
-
-
-
-
-
 }

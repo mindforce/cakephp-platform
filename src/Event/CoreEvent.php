@@ -21,10 +21,18 @@ class CoreEvent implements EventListenerInterface {
 
     public function implementedEvents() {
         return array(
+            'Controller.initialize' => array(
+                'callable' => 'onControllerInit'
+            ),
             'View.beforeLayout' => [
                 'callable' => 'setDefaultViewAssets'
             ]
         );
+    }
+
+    public function onControllerInit($event) {
+        $controller = $event->subject();
+        $controller->loadComponent('Platform.ViewPath');
     }
 
     public function setDefaultViewAssets($event){
