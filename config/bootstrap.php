@@ -19,6 +19,11 @@ try {
 } catch (\Exception $e) {
 	//die('Unable to load Config/settings file.');
 }
+$timeZone = 'UTC';
+if (Configure::read('App.timezone')) {
+    $timeZone = Configure::read('App.timezone');
+}
+date_default_timezone_set($timeZone);
 
 Type::map('json', 'Platform\Database\Type\JsonType');
 
