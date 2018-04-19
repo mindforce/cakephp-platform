@@ -3,14 +3,16 @@
     "description": "Platform plugin for CakePHP",
     "type": "cakephp-plugin",
     "require": {
-        "php": ">=5.4.16",
-        "cakephp/cakephp": ">=3.1",
+        "php": ">=5.6",
+        "cakephp/cakephp": "~3.2",
         "cakephp/migrations": "~1.0",
-        "cakephp/plugin-installer": "*",
-        "lorenzo/cakephp-email-queue": "~3.1"
+        "cakephp/plugin-installer": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
+    },
+    "suggest": {
+        "lorenzo/cakephp-email-queue": "Allows to send emails without time gaps in queue"
     },
     "autoload": {
         "psr-4": {
