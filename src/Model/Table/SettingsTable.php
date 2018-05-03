@@ -29,12 +29,12 @@ class SettingsTable extends Table {
  * @param array $config The configuration for the Table.
  * @return void
  */
-	public function initialize(array $config) {
-		$this->table('platform_settings');
-		$this->displayField('id');
-		$this->primaryKey('id');
+    public function initialize(array $config) {
+        $this->table('platform_settings');
+        $this->displayField('id');
+        $this->primaryKey('id');
 
-	}
+    }
 
 /**
  * Default validation rules.
@@ -42,63 +42,64 @@ class SettingsTable extends Table {
  * @param \Cake\Validation\Validator $validator
  * @return \Cake\Validation\Validator
  */
-	public function validationDefault(Validator $validator) {
-		$validator
-			->add('id', 'valid', ['rule' => 'numeric'])
-			->allowEmpty('id', 'create')
-			->requirePresence('plugin', 'create')
-			->notEmpty('plugin')
-			->requirePresence('path', 'create')
-			->notEmpty('path')
-			->allowEmpty('value');
+    public function validationDefault(Validator $validator) {
+        $validator
+            ->add('id', 'valid', ['rule' => 'numeric'])
+            ->allowEmpty('id', 'create')
+            ->requirePresence('plugin', 'create')
+            ->notEmpty('plugin')
+            ->requirePresence('path', 'create')
+            ->notEmpty('path')
+            ->allowEmpty('value');
 
-		return $validator;
-	}
+        return $validator;
+    }
 
-	public function findExtended(Query $query, array $options = []) {
-		$mapper = function($setting, $path, $mapReduce) {
-			$prototype = $this->getSettingPrototype($setting->path, $setting->plugin);
-			foreach ($prototype as $field=>$value){
-				$setting->{$field} = $value;
-			}
-			$mapReduce->emit($setting, $path);
-		};
-		return $query->mapReduce($mapper);
-	}
+    public function findExtended(Query $query, array $options = []) {
+        $mapper = function($setting, $path, $mapReduce) {
+            $prototype = $this->getSettingPrototype($setting->path, $setting->plugin);
+            foreach ($prototype as $field=>$value){
+                $setting->{$field} = $value;
+            }
+            $mapReduce->emit($setting, $path);
+        };
+        return $query->mapReduce($mapper);
+    }
 
-	public function findEditable(Query $query, array $options = []) {
-		$mapper = function($setting, $path, $mapReduce) {
-			$type = 'editable';
-			if($setting->hidden == true) $type = 'hidden';
-			$mapReduce->emitIntermediate($setting, $type);
-		};
-		$reducer = function($articles, $type, $mapReduce) {
-		    $mapReduce->emit($articles, $type);
-		};
-		return $query->mapReduce($mapper, $reducer);
-	}
+    public function findEditable(Query $query, array $options = []) {
+        $mapper = function($setting, $path, $mapReduce) {
+            $type = 'editable';
+            if($setting->hidden == true) $type = 'hidden';
+            $mapReduce->emitIntermediate($setting, $type);
+        };
+        $reducer = function($articles, $type, $mapReduce) {
+            $mapReduce->emit($articles, $type);
+        };
+        return $query->mapReduce($mapper, $reducer);
+    }
 
-	protected function getSettingPrototype($path, $plugin = null){
-		$defaults = [
-			'title' => null,
-			'description' => null,
-			'cell' => null,
-			'default' => null,
-			'options' => null,
-			'hidden' => false,
-		];
-		//TODO: maybe implement cache for reader results or remember results in table class in future
-		$settingsReader = new PhpConfig();
-		$input = 'settings';
-		if(!empty($plugin)){
-			$input = $plugin.'.settings';
-		}
-		$settingPrototypes = $settingsReader->read($input);
-		if($setting = Hash::extract($settingPrototypes, '{n}[path='.$path.']')[0]){
-			return array_merge($defaults, $setting);
-		}
-		return [];
-	}
+    protected function getSettingPrototype($path, $plugin = null){
+        $defaults = [
+            'title' => null,
+            'description' => null,
+            'cell' => null,
+            'default' => null,
+            'options' => null,
+            'hidden' => false,
+        ];
+        //TODO: maybe implement cache for reader results or remember results in table class in future
+        $settingsReader = new PhpConfig();
+        $input = 'settings';
+        if(!empty($plugin)){
+            $input = $plugin.'.settings';
+        }
+        $settingPrototypes = $settingsReader->read($input);
+        $setting = Hash::extract($settingPrototypes, '{n}[path='.$path.']');
+        if(isset($setting[0])){
+            return array_merge($defaults, $setting);
+        }
+        return [];
+    }
 
 
 }
