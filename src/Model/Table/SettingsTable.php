@@ -95,7 +95,7 @@ class SettingsTable extends Table {
         }
         $settingPrototypes = $settingsReader->read($input);
         $setting = Hash::extract($settingPrototypes, '{n}[path='.$path.']');
-        if(isset($setting[0])){
+        if($setting = Hash::get($setting, '0', null)){
             return array_merge($defaults, $setting);
         }
         return [];
