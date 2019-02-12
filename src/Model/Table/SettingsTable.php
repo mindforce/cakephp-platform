@@ -30,10 +30,9 @@ class SettingsTable extends Table {
  * @return void
  */
     public function initialize(array $config) {
-        $this->table('platform_settings');
-        $this->displayField('id');
-        $this->primaryKey('id');
-
+        $this->setTable('platform_settings');
+        $this->setDisplayField('id');
+        $this->setPrimaryKey('id');
     }
 
 /**

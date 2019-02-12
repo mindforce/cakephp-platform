@@ -4,9 +4,9 @@
     "type": "cakephp-plugin",
     "require": {
         "php": ">=5.6",
-        "cakephp/cakephp": "~3.2",
-        "cakephp/migrations": "~1.0",
-        "cakephp/plugin-installer": "*"
+        "cakephp/cakephp": "3.7.*",
+        "cakephp/migrations": "^2.0.0",
+        "cakephp/plugin-installer": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*"

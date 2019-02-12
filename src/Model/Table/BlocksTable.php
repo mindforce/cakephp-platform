@@ -27,11 +27,11 @@ class BlocksTable extends Table {
  * @return void
  */
 	public function initialize(array $config) {
-		$this->table('platform_blocks');
-		$this->displayField('title');
-		$this->primaryKey('id');
-		$this->addBehavior('Timestamp');
+        $this->setTable('platform_blocks');
+        $this->setDisplayField('title');
+        $this->setPrimaryKey('id');
 
+        $this->addBehavior('Timestamp');
 		$this->hasMany('Cells', [
 			'foreignKey' => 'block_id',
 			'className' => 'Platform.Cells',

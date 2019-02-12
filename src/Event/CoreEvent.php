@@ -31,12 +31,12 @@ class CoreEvent implements EventListenerInterface {
     }
 
     public function onControllerInit($event) {
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $controller->loadComponent('Platform.ViewPath');
     }
 
     public function setDefaultViewAssets($event){
-        $view = $event->subject();
+        $view = $event->getSubject();
         $params = $view->request->params;
         $path = Configure::read('App.webroot') . DS . '{asset}' . DS;
         $path .= (!empty($params['prefix']) ? Inflector::underscore($params['prefix']) . DS : '');

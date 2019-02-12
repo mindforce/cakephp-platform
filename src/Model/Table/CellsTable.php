@@ -27,9 +27,10 @@ class CellsTable extends Table {
  * @return void
  */
 	public function initialize(array $config) {
-		$this->table('platform_cells');
-		$this->displayField('title');
-		$this->primaryKey('id');
+        $this->setTable('platform_cells');
+        $this->setDisplayField('title');
+        $this->setPrimaryKey('id');
+
 		$this->addBehavior('Timestamp');
 		$this->addBehavior('Tree');
 		$this->addBehavior('CounterCache', ['Blocks' => ['cell_count']]);
